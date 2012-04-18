@@ -39,8 +39,12 @@ class HaylixContentWriter extends ContentWriter {
 			}
 			$this->id = $this->nameToId($fullname);
 		}
-		
-		$result = $this->getHaylix()->upload_data(HaylixService::PUBLIC_CONTAINER, $reader->read(), $this->id);
+
+		$type = null;
+		if (class_exists('HTTP')) {
+			$type = HTTP::getMimeType($name);
+		}
+		$result = $this->getHaylix()->upload_data(HaylixService::PUBLIC_CONTAINER, $reader->read(), $this->id, $type);
 		if ($result < 0) {
 			throw new Exception("Failed uploading to haylix");
 		}

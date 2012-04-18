@@ -263,13 +263,13 @@ class CloudStorage
         return -2;
     }
 
-	public function upload_file($container, $filename)
+	public function upload_file($container, $filename, $type=null)
 	{
 		$file = file_get_contents($filename);
-		$this->upload_data($container, $file, $filename);
+		$this->upload_data($container, $file, $filename, $type);
 	}
 	
-    public function upload_data($container, $file, $filename) 
+    public function upload_data($container, $file, $filename, $type=null) 
     {
         if ($file == FALSE) 
         {
@@ -288,6 +288,9 @@ class CloudStorage
         }
 
         $headers = array("X-Auth-Token: ".$this->token);
+		if ($type) {
+			$headers['Content-Type'] = $type;
+		}
 
         $this->get_conn("PUT", "/v0/".$this->account."/".$container."/".$arr[sizeof($arr) - 1], $headers, 360, $file, "", "");
 
