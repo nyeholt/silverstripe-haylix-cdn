@@ -289,7 +289,7 @@ class CloudStorage
 
         $headers = array("X-Auth-Token: ".$this->token);
 		if ($type) {
-			$headers['Content-Type'] = $type;
+			$headers[] = 'Content-Type: '.$type;
 		}
 
         $this->get_conn("PUT", "/v0/".$this->account."/".$container."/".$arr[sizeof($arr) - 1], $headers, 360, $file, "", "");
