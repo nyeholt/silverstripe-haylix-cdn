@@ -7,10 +7,16 @@ include_once dirname(dirname(__FILE__)).'/thirdparty/haylix.php';
  * @license BSD License http://silverstripe.org/bsd-license/
  */
 class HaylixContentWriter extends ContentWriter {
+
+	public $publicContainer = 'public';
 	
+	/**
+	 * @var CloudStorage
+	 */
+	public $haylix;
 	
 	protected function getHaylix() {
-		return singleton('HaylixService')->getHaylix();
+		return $this->haylix;
 	}
 	
 	public function nameToId($name) {
@@ -26,8 +32,8 @@ class HaylixContentWriter extends ContentWriter {
 	 *				if needed
 	 */
 	public function write($content = null, $fullname = '') {
-		$this->getHaylix()->add_container(HaylixService::PUBLIC_CONTAINER);
-		$this->getHaylix()->public_container(HaylixService::PUBLIC_CONTAINER);
+		$this->getHaylix()->add_container($this->publicContainer);
+		$this->getHaylix()->public_container($this->publicContainer);
 		
 		$reader = $this->getReaderWrapper($content);
 		
@@ -42,13 +48,13 @@ class HaylixContentWriter extends ContentWriter {
 
 		$type = null;
 		if (class_exists('HTTP')) {
-			$type = HTTP::getMimeType($name);
+			$type = HTTP::get_mime_type($name);
 		}
-		$result = $this->getHaylix()->upload_data(HaylixService::PUBLIC_CONTAINER, $reader->read(), $this->id, $type);
+		$result = $this->getHaylix()->upload_data($this->publicContainer, $reader->read(), $this->id, $type);
 		if ($result < 0) {
 			throw new Exception("Failed uploading to haylix");
 		}
 
-		// print_r($this->getHaylix()->info_container(HaylixService::PUBLIC_CONTAINER));
+		// print_r($this->getHaylix()->info_container($this->publicContainer));
 	}
 }

@@ -10,23 +10,25 @@ class HaylixContentReader extends ContentReader {
 	
 	protected $info = null;
 	
+	public $publicContainer = 'public';
+	
+	/**
+	 * @var CloudStorage
+	 */
+	public $haylix;
+	
+	protected function getHaylix() {
+		return $this->haylix;
+	}
+	
 	protected function getInfo() {
 		if (!$this->info) {
 			$haylix = $this->getHaylix();
 		
-			$this->info = $haylix->info_file(HaylixService::PUBLIC_CONTAINER, $this->getId());
+			$this->info = $haylix->info_file($this->publicContainer, $this->getId());
 		}
 		return $this->info;
 	}
-	
-	/**
-	 *
-	 * @return CloudStorage
-	 */
-	protected function getHaylix() {
-		return singleton('HaylixService')->getHaylix();
-	}
-
 	
 	public function isReadable() {
 		if (!parent::isReadable()) {
@@ -37,6 +39,10 @@ class HaylixContentReader extends ContentReader {
 		
 		return strlen($info) > 0;
 	}
+	
+	public function urlStub() {
+		return sprintf('http://%s.www-cdn.s.mel.secureinf.net', $this->haylix->account);
+	}
 
 	/**
 	 * Get a url to this piece of content
@@ -44,7 +50,7 @@ class HaylixContentReader extends ContentReader {
 	 * @return string
 	 */
 	public function getURL() {
-		return HaylixService::CONTENT_URL .'/' . HaylixService::PUBLIC_CONTAINER .'/' . $this->getId();
+		return $this->urlStub() .'/' . $this->publicContainer .'/' . $this->getId();
 	}
 	
 	/**
