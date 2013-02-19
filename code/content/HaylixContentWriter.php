@@ -57,4 +57,8 @@ class HaylixContentWriter extends ContentWriter {
 
 		// print_r($this->getHaylix()->info_container($this->publicContainer));
 	}
+
+	public function delete() {
+		$this->getHaylix()->del_file($this->publicContainer, $this->getId());
+	}
 }
